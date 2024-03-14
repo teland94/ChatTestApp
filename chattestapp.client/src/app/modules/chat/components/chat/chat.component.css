@@ -23,3 +23,7 @@
   flex-grow: 1;
   resize: none;
 }
+
+.current-user {
+  font-style: italic;
+}
