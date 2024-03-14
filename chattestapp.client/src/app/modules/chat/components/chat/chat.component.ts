@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { SignalRService } from '../../services/signal-r.service';
 import { MessageService } from '../../services/message.service';
 import { Message } from '../../model/message';
@@ -6,31 +6,40 @@ import { Message } from '../../model/message';
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.css']
+  styleUrls: ['./chat.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChatComponent implements OnInit {
   public messages: Message[] = [];
   public newMessage: string = '';
   public userName: string = '';
 
-  constructor(private signalRService: SignalRService,
-              private messageService: MessageService) { }
+  @ViewChild('messagesContainer', { static: true }) messagesContainer!: ElementRef;
 
-  ngOnInit() {
+  constructor(private signalRService: SignalRService,
+              private messageService: MessageService,
+              private cd: ChangeDetectorRef,
+              private renderer: Renderer2) { }
+
+  ngOnInit(): void {
     this.signalRService.startConnection();
 
     this.userName = 'User' + Math.floor(Math.random() * 1000);
 
     this.signalRService.onMessageReceived((message: Message) => {
       this.messages.push(message);
+      this.cd.detectChanges();
+      this.scrollToBottom();
     });
 
     this.messageService.getMessages().subscribe(messages => {
       this.messages = messages;
+      this.cd.detectChanges();
+      this.scrollToBottom();
     });
   }
 
-  public sendMessage() {
+  public sendMessage(): void {
     if (!this.newMessage) {
       return;
     }
@@ -38,5 +47,14 @@ export class ChatComponent implements OnInit {
     this.signalRService.sendMessage(this.userName, this.newMessage);
 
     this.newMessage = '';
+  }
+
+  trackByMessageId(index: number, message: Message): number {
+    return message.id;
+  }
+
+  private scrollToBottom(): void {
+    this.renderer.setProperty(this.messagesContainer.nativeElement,
+      'scrollTop', this.messagesContainer.nativeElement.scrollHeight);
   }
 }

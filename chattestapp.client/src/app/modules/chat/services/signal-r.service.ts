@@ -14,22 +14,18 @@ export class SignalRService {
       .build();
   }
 
-  public get hubConnection() {
-    return this._hubConnection;
-  }
-
-  public startConnection = () => {
-    this.hubConnection
+  public startConnection = (): void => {
+    this._hubConnection
       .start()
       .then(() => console.log('Connection started'))
       .catch(err => console.log('Error while starting connection: ' + err))
   }
 
-  public onMessageReceived(callback: (message: any) => void) {
+  public onMessageReceived(callback: (message: any) => void):  void {
     this._hubConnection.on('ReceiveMessage', callback);
   }
 
-  public sendMessage(userName: string, message: string) {
+  public sendMessage(userName: string, message: string): void {
     this._hubConnection
       .invoke('SendMessage', userName, message)
       .catch((err: any) => console.error(err));
