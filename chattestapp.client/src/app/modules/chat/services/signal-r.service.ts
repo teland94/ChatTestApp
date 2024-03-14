@@ -21,6 +21,13 @@ export class SignalRService {
       .catch(err => console.log('Error while starting connection: ' + err))
   }
 
+  public stopConnection = (): void => {
+    this._hubConnection
+      .stop()
+      .then(() => console.log('Connection stopped'))
+      .catch(err => console.log('Error while stopping connection: ' + err))
+  }
+
   public onMessageReceived(callback: (message: any) => void):  void {
     this._hubConnection.on('ReceiveMessage', callback);
   }

@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  ElementRef,
+  Renderer2,
+  ViewChild,
+  OnDestroy
+} from '@angular/core';
 import { SignalRService } from '../../services/signal-r.service';
 import { MessageService } from '../../services/message.service';
 import { Message } from '../../model/message';
@@ -9,7 +18,7 @@ import { Message } from '../../model/message';
   styleUrls: ['./chat.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChatComponent implements OnInit {
+export class ChatComponent implements OnInit, OnDestroy {
   public messages: Message[] = [];
   public newMessage: string = '';
   public userName: string = '';
@@ -37,6 +46,10 @@ export class ChatComponent implements OnInit {
       this.cd.detectChanges();
       this.scrollToBottom();
     });
+  }
+
+  public ngOnDestroy(): void {
+    this.signalRService.stopConnection();
   }
 
   public sendMessage(): void {
