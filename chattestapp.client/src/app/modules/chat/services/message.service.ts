@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Message } from '../model/message';
 import { environment } from '../../../../environments/environment';
+import { CreateMessageDto } from '../model/create-message-dto';
 
 @Injectable()
 export class MessageService {
@@ -10,7 +11,11 @@ export class MessageService {
 
   constructor(private http: HttpClient) { }
 
-  getMessages(): Observable<Message[]> {
+  public getMessages(): Observable<Message[]> {
     return this.http.get<Message[]>(this.apiUrl);
+  }
+
+  public sendMessage(message: CreateMessageDto): Observable<Message> {
+    return this.http.post<Message>(this.apiUrl, message);
   }
 }

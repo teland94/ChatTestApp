@@ -22,5 +22,20 @@ namespace ChatTestApp.Server.Controllers
 
             return Ok(messages);
         }
+
+        [HttpPost]
+        public async Task<ActionResult<Message>> Post(CreateMessageDto messageDto)
+        {
+            var message = new Message
+            {
+                User = messageDto.User,
+                Content = messageDto.Content,
+                CreatedDate = DateTime.UtcNow
+            };
+
+            message.Id = await _messageService.AddMessage(message);
+
+            return Ok(message);
+        }
     }
 }

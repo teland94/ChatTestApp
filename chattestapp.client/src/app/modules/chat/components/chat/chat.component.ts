@@ -11,6 +11,7 @@ import {
 import { SignalRService } from '../../services/signal-r.service';
 import { MessageService } from '../../services/message.service';
 import { Message } from '../../model/message';
+import { CreateMessageDto } from '../../model/create-message-dto';
 
 @Component({
   selector: 'app-chat',
@@ -57,9 +58,25 @@ export class ChatComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.signalRService.sendMessage(this.userName, this.newMessage);
+    const createdMessage: CreateMessageDto = {
+      user: this.userName,
+      content: this.newMessage
+    };
 
-    this.newMessage = '';
+    this.messageService.sendMessage(createdMessage).subscribe(sentMessage => {
+      const message: Message = {
+        id: sentMessage.id,
+        user: sentMessage.user,
+        content: sentMessage.content,
+        createdDate: sentMessage.createdDate
+      };
+
+      this.signalRService.sendMessage(message).then(() => {
+        this.newMessage = '';
+        this.cd.detectChanges();
+        this.scrollToBottom();
+      });
+    });
   }
 
   trackByMessageId(index: number, message: Message): number {

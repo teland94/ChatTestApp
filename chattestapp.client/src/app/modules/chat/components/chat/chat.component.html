@@ -4,7 +4,8 @@
   </div>
   <div class="messages" #messagesContainer>
     <div *ngFor="let message of messages; trackBy: trackByMessageId">
-      <span [ngClass]="{'current-user': message.user === userName}">{{message.user}}</span>: {{message.content}}
+      <span [ngClass]="{'current-user': message.user === userName}">{{message.user}}</span>
+      [{{message.createdDate | date: 'dd.MM.yyyy HH:mm'}}]: {{message.content}}
     </div>
   </div>
   <div class="input-area">

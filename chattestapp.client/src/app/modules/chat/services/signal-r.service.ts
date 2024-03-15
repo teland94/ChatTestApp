@@ -1,6 +1,7 @@
 import * as signalR from '@microsoft/signalr';
 import { environment } from '../../../../environments/environment';
 import { Injectable } from '@angular/core';
+import { Message } from '../model/message';
 
 @Injectable()
 export class SignalRService {
@@ -28,13 +29,11 @@ export class SignalRService {
       .catch(err => console.log('Error while stopping connection: ' + err))
   }
 
-  public onMessageReceived(callback: (message: any) => void):  void {
+  public onMessageReceived(callback: (message: Message) => void):  void {
     this._hubConnection.on('ReceiveMessage', callback);
   }
 
-  public sendMessage(userName: string, message: string): void {
-    this._hubConnection
-      .invoke('SendMessage', userName, message)
-      .catch((err: any) => console.error(err));
-  }
+  public sendMessage = (message: Message): Promise<any> => this._hubConnection
+    .invoke('SendMessage', message)
+    .catch((err: any) => console.error(err));
 }

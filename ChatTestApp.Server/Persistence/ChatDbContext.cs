@@ -1,6 +1,5 @@
 ﻿using ChatTestApp.Server.Model;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace ChatTestApp.Server.Persistence
 {
